@@ -1,0 +1,61 @@
+import random
+
+def criar_tabuleiro(tamanho=8):
+    return [['~' for _ in range(tamanho)] for _ in range(tamanho)]
+
+def exibir_tabuleiro(tabuleiro, ocultar_navios=True):
+    print("  " + " ".join(str(i) for i in range(len(tabuleiro))))
+    for i, linha in enumerate(tabuleiro):
+        if ocultar_navios:
+            print(i, ' '.join('X' if cel == 'N' else cel for cel in linha))
+        else:
+            print(i, ' '.join(linha))
+
+def posicionar_navios(tabuleiro, quantidade=5):
+    navios = []
+    while len(navios) < quantidade:
+        x, y = random.randint(0, len(tabuleiro)-1), random.randint(0, len(tabuleiro)-1)
+        if tabuleiro[x][y] == '~':
+            tabuleiro[x][y] = 'N'
+            navios.append((x, y))
+    return navios
+
+def jogar():
+    tamanho = 8
+    tabuleiro_jogador = criar_tabuleiro(tamanho)
+    tabuleiro_computador = criar_tabuleiro(tamanho)
+    navios_computador = posicionar_navios(tabuleiro_computador, 5)
+    tentativas = 10
+    
+    print("Bem-vindo ao Batalha Naval!")
+    
+    while tentativas > 0 and navios_computador:
+        exibir_tabuleiro(tabuleiro_jogador)
+        
+        try:
+            x = int(input("Informe a linha (0-7): "))
+            y = int(input("Informe a coluna (0-7): "))
+        except ValueError:
+            print("Entrada inválida, tente novamente!")
+            continue
+        
+        if (x, y) in navios_computador:
+            print("Acertou um navio!")
+            tabuleiro_jogador[x][y] = 'X'
+            navios_computador.remove((x, y))
+        else:
+            print("Água!")
+            tabuleiro_jogador[x][y] = 'O'
+        
+        tentativas -= 1
+        print(f"Tentativas restantes: {tentativas}\n")
+    
+    if not navios_computador:
+        print("Parabéns! Você afundou todos os navios!")
+    else:
+        print("Game Over! Você ficou sem tentativas.")
+        print("Os navios estavam nas posições:")
+        exibir_tabuleiro(tabuleiro_computador, ocultar_navios=False)
+
+# Iniciar o jogo
+jogar()
