@@ -1,0 +1,34 @@
+import chess
+import chess.engine
+
+def iniciar_desafio():
+    board = chess.Board("8/8/8/3Q4/3k4/8/8/4K3 w - - 0 1")  # Exemplo de posição com xeque-mate em 1
+    engine = chess.engine.SimpleEngine.popen_uci("stockfish")
+    
+    print("Bem-vindo ao Desafio de Xadrez!")
+    print("Encontre o xeque-mate na posição abaixo:")
+    print(board)
+    
+    for _ in range(3):  # Limite de tentativas
+        move = input("Digite seu lance (ex: d5d4): ")
+        
+        if move in [m.uci() for m in board.legal_moves]:
+            board.push_uci(move)
+            print(board)
+            
+            if board.is_checkmate():
+                print("Parabéns! Você encontrou o xeque-mate!")
+                break
+            else:
+                print("Bom lance, mas ainda não é xeque-mate. Tente novamente!")
+        else:
+            print("Lance inválido. Tente novamente.")
+    else:
+        print("Você não encontrou o xeque-mate. Aqui está a solução:")
+        best_move = engine.play(board, chess.engine.Limit(time=1))
+        print(f"O melhor lance era: {best_move.move}")
+    
+    engine.quit()
+
+# Iniciar o jogo
+iniciar_desafio()
